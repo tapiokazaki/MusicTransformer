@@ -1,0 +1,61 @@
+# config.yaml
+
+data:
+  tokenized_data_dir: "tokenized_data" # トークン化されたデータのディレクトリ
+  tokenizer_vocab_path: "tokenizer_vocab/tokenizer_vocab.json" # トークナイザのボキャブラリファイル
+  pad_token_id: 0 # Padding token トークンID
+
+model:
+  vocab_size: 4096 # get_vocab_size_from_npzから最大長を上書き。
+  embedding_dim: 512
+  num_heads: 8
+  num_layers: 16  # num_decoder_layers
+#  dim_feedforward: 2048
+  max_seq_len: 1024 # Keep this at 1024. If OOM, reduce.seqの最大長(仮)
+  min_seq_len: 32
+  dropout_ratio: 0.1
+
+training:
+  learning_rate: 0.0001 # Initial LR for Adam. The scheduler will adjust this.
+  batch_size: 64                   # 物理バッチサイズを64にして実質的にバッチサイズが64*16=1024 になるようにする
+  accumulate_grad_batches: 16      # 勾配を16ステップ分累積する
+#  num_workers: 4 # この行はコメントアウトしたままでOK。train.pyでos.cpu_count()を使用
+  max_epochs: 400 #EarlyStopping用に、大きな値に設定
+  accelerator: "gpu"
+  devices: 1
+  precision: 'bf16-mixed' # A100のTensor Coreを最大限に活用するための設定
+  gradient_clip_val: 1.0 # Standard L2 norm クリップ
+  gradient_clip_algorithm: "norm"
+
+callbacks:
+  checkpoint:
+    monitor: "val_loss"
+    dirpath: "checkpoints"  #  Google Drive: "/content/drive/MyDrive/MyTransFormer/checkpoints"
+    filename: "music-transformer-{epoch:02d}-{val_loss:.4f}" #
+    save_top_k: 3
+    mode: "min"
+  lr_monitor_logging_interval: "epoch"
+  early_stopping: # EarlyStoppingコールバック
+    monitor: "val_loss"
+    mode: "min"
+    patience: 20 # 検証ロスが20エポック改善しなかったら停止 (調整可能)
+
+logger:
+  name: "music_transformer"
+  save_dir: "tb_logs" # TensorBoardログの保存先
+
+# generation_config.yaml
+
+# 使用する学習済みモデルのチェックポイントのパス
+# 例: "checkpoints/music-transformer-epoch=02-val_loss=2.7500.ckpt"
+# 'best'や'latest'のようなシンボリックリンクも良い
+checkpoint_path: "checkpoints/best.ckpt" # ★要修正: 実際の最良モデルのパスに書き換えてください
+
+# 生成する音楽の保存先
+output_midi_path: "generated_music/output_song.mid"
+
+# 生成の挙動を制御するパラメータ
+generation_params:
+  max_generation_len: 512   # 生成するトークンの最大長
+  temperature: 1.0          # 温度：高いほどランダムで多様な、低いほど決定的な出力になる
+  top_p: 0.9                # Top-pサンプリングのp値：確率の合計がpを超えるまで候補を選ぶ

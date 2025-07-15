@@ -1,0 +1,80 @@
+# requirements.txt
+
+torch
+torchvision
+torchaudio
+
+numpy==1.26.4 # 推奨バージョン、または pip install numpy<2
+# --- Core Frameworks ---
+# PyTorch: 最新の安定版を推奨。CUDAバージョンに合わせて選択してください。
+# PyTorchのインストールは公式サイト (https://pytorch.org/get-started/locally/) を参照し、
+# ご自身の環境 (OS, CUDAバージョンなど) に合ったコマンドで別途インストールすることを強く推奨します。
+# ここではバージョン指定の例として記載しますが、以下の行はコメントアウトしておき、
+# ユーザーが自身の環境に合わせてインストールする形が良いでしょう。
+# torch>=2.0.0 # 例: PyTorch 2.0.0以上 (CUDA版は別途インストール) [2, 48]
+# torchvision>=0.15.0 # torchとバージョンを合わせることが多い [2, 48]
+# torchaudio>=2.0.0 # torchとバージョンを合わせることが多い [2, 48]
+# --- Data Handling ---
+
+pytorch-lightning>=2.2.0 # PyTorch Lightning 本体 [7, 21, 35]
+
+# --- Configuration Management ---
+hydra-core>=1.3.2 # 設定管理フレームワーク [13, 23, 42]
+omegaconf>=2.3.0 # Hydraの設定オブジェクトを扱うために必要 [6, 14, 22, 43]
+
+# --- Tokenization ---
+# Hugging Face Tokenizers: 高速なトークナイザ実装 [1, 16, 34]
+tokenizers>=0.15.0
+# Hugging Face Transformers: AutoTokenizerや事前学習モデル利用のため [15, 17, 25, 28]
+# (tokenizersライブラリのみで完結する場合は不要なこともあります)
+transformers>=4.30.0
+
+# --引数設定--
+pyyaml
+
+# --- Logging & Visualization ---
+tensorboard>=2.10.0 # TensorBoardによるロギング [5, 9, 11, 32]
+# tensorboardX>=2.2 # (古いプロジェクトや特定のケースで必要になる場合) [18, 43]
+
+# --- Metrics ---
+torchmetrics>=0.11.0 # BLEUスコアなどの評価指標計算 [3, 8, 10, 30]
+
+# --- Utilities ---
+# numpy>=1.21.0 # 数値計算の基本ライブラリ [4, 20, 24, 31]
+# PyTorch Lightningのextra依存関係に含まれることがあるもの (明示的に指定) [43]
+jsonargparse[signatures]>=4.27.0 # Lightningが内部で設定パースなどに利用することがある
+rich>=12.0.0 # 高度なターミナル出力
+
+#hugingfaceのデータセットの処理に必要なライブラリ
+datasets
+#midiデータセットの処理に必要なライブラリ
+
+# --- MIDI Processing ---
+pretty_midi
+midi2audio
+soundfile
+
+# --- Plotting ---
+matplotlib
+
+# --- Optional (コメントアウトしていますが、プロジェクトに応じて有効化してください) ---
+# # 特定のデータセット形式を扱う場合
+# pandas>=1.3.0
+# pyarrow>=7.0.0
+
+# # より高度なプロットライブラリ
+# matplotlib>=3.5.0 # [43]
+# seaborn>=0.11.0
+
+# # 実験管理・追跡 (W&B, MLflowなど)
+# wandb
+# mlflow
+
+# # 特定のコールバックや機能で必要になる可能性のあるもの
+# # 例: Hugging Face Hubとの連携など
+# huggingface-hub>=0.16.0 # [16, 25]
+
+# # コードフォーマッターやリンター (開発環境用、必須ではない)
+# black
+# flake8
+# mypy
